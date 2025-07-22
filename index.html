@@ -1,21 +1,686 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
-<html>
+<html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title></title>
-    <meta name="description" content="" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="" />
-  </head>
-  <body>
-    <p>Welcome to your new site!</p>
-    <p>To get started, edit <code>index.html</code> and save to reload.</p>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stresformance Tracker</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+      /* Custom styles for the gauges - we'll refine these */
+      .gauge-container {
+        width: 200px;
+        height: 100px; /* Half of width for semi-circle */
+        overflow: hidden;
+        position: relative;
+        /* Using Tailwind's rounded-full for half circle on bottom */
+        border-bottom-left-radius: 9999px; /* Equivalent to rounded-full for bottom half */
+        border-bottom-right-radius: 9999px;
+        transform: rotate(180deg); /* Rotate to make it appear upright */
+      }
+      .gauge-fill {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 200%; /* Double width for the full circle effect */
+        height: 200%; /* Double height for the full circle effect */
+        transform-origin: center center; /* Rotate around the center of the full circle */
+        border-radius: 9999px; /* Make it a circle */
+        transform: rotate(
+          0deg
+        ); /* Initial rotation, JavaScript will change this */
+        transition: transform 0.5s ease-in-out,
+          background-color 0.5s ease-in-out; /* Smooth transition */
+      }
+      .gauge-value-display {
+        position: absolute;
+        left: 50%;
+        bottom: 10px; /* Adjust based on gauge size */
+        transform: translateX(-50%) rotate(180deg); /* Counter-rotate value */
+        font-size: 2.5rem; /* Large text for the number */
+        font-weight: bold;
+        color: white; /* Or text-gray-800 */
+        z-index: 10; /* Ensure it's above the fill */
+      }
+      .gauge-label {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%) rotate(180deg); /* Counter-rotate label */
+        color: white;
+        font-size: 1.25rem;
+        z-index: 5;
+      }
 
-    <script src="" async defer></script>
+      /* Adjusting form-radio style for better visibility with Tailwind */
+      .form-radio {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        display: inline-block;
+        vertical-align: middle;
+        height: 1.25rem;
+        width: 1.25rem;
+        border-radius: 50%;
+        background-color: #e2e8f0; /* bg-gray-200 */
+        border: 1px solid #cbd5e0; /* border-gray-300 */
+        cursor: pointer;
+        outline: none;
+        transition: background-color 0.15s ease-in-out,
+          border-color 0.15s ease-in-out;
+      }
+
+      .form-radio:checked {
+        background-color: #3b82f6; /* bg-blue-500 */
+        border-color: #3b82f6; /* border-blue-500 */
+      }
+      .form-radio:checked::before {
+        content: "";
+        display: block;
+        width: 0.5rem;
+        height: 0.5rem;
+        background-color: white;
+        border-radius: 50%;
+        margin: 0.25rem; /* centers the dot */
+      }
+      .form-radio:focus {
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5); /* focus-ring for accessibility */
+      }
+    </style>
+  </head>
+  <body
+    class="bg-gray-900 text-gray-200 min-h-screen flex flex-col items-center py-10 px-4"
+  >
+    <h1
+      class="text-6xl font-extrabold text-blue-400 mb-12 animate-pulse"
+      style="text-shadow: 0 0 15px rgba(60, 180, 255, 0.7)"
+    >
+      STRESFORMANCE TRACKER
+    </h1>
+
+    <div
+      class="container mx-auto p-6 bg-gray-800 rounded-xl shadow-lg w-full max-w-4xl"
+    >
+      <section id="stress-assessment" class="assessment-section">
+        <h2 class="text-4xl font-semibold mb-6 text-blue-300">
+          Your Stress Measure
+        </h2>
+        <p class="text-lg mb-8">
+          Rate how often you've experienced these feelings in the past month:
+        </p>
+
+        <div class="mb-6 bg-gray-700 p-4 rounded-lg">
+          <p class="font-medium text-xl mb-3">
+            <span class="mr-2 text-pink-400">🧠</span> 1. In the last 1-4 weeks,
+            I found it hard to wind down?
+          </p>
+          <div class="flex flex-wrap gap-4">
+            <label class="inline-flex items-center text-lg">
+              <input
+                type="radio"
+                name="q1"
+                value="1"
+                class="form-radio"
+                required
+              />
+              <span class="ml-2"
+                >Very Rare <span class="text-yellow-400">☀️</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q1" value="2" class="form-radio" />
+              <span class="ml-2"
+                >Rare <span class="text-orange-400">✨</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q1" value="3" class="form-radio" />
+              <span class="ml-2"
+                >Moderate <span class="text-yellow-500">🌕</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q1" value="4" class="form-radio" />
+              <span class="ml-2"
+                >Frequent <span class="text-red-500">⚡</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q1" value="5" class="form-radio" />
+              <span class="ml-2"
+                >Very Frequent <span class="text-red-600">🔥</span></span
+              >
+            </label>
+          </div>
+        </div>
+
+        <div class="mb-6 bg-gray-700 p-4 rounded-lg">
+          <p class="font-medium text-xl mb-3">
+            <span class="mr-2 text-yellow-400">⚡</span> 2. In the last 1-4
+            weeks, I tended to over-react to situations?
+          </p>
+          <div class="flex flex-wrap gap-4">
+            <label class="inline-flex items-center text-lg">
+              <input
+                type="radio"
+                name="q2"
+                value="1"
+                class="form-radio"
+                required
+              />
+              <span class="ml-2"
+                >Very Rare <span class="text-yellow-400">☀️</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q2" value="2" class="form-radio" />
+              <span class="ml-2"
+                >Rare <span class="text-orange-400">✨</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q2" value="3" class="form-radio" />
+              <span class="ml-2"
+                >Moderate <span class="text-yellow-500">🌕</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q2" value="4" class="form-radio" />
+              <span class="ml-2"
+                >Frequent <span class="text-red-500">⚡</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q2" value="5" class="form-radio" />
+              <span class="ml-2"
+                >Very Frequent <span class="text-red-600">🔥</span></span
+              >
+            </label>
+          </div>
+        </div>
+
+        <div class="mb-6 bg-gray-700 p-4 rounded-lg">
+          <p class="font-medium text-xl mb-3">
+            <span class="mr-2 text-blue-400">🌀</span> 3. In the last 1-4 weeks,
+            I felt restless?
+          </p>
+          <div class="flex flex-wrap gap-4">
+            <label class="inline-flex items-center text-lg">
+              <input
+                type="radio"
+                name="q3"
+                value="1"
+                class="form-radio"
+                required
+              />
+              <span class="ml-2"
+                >Very Rare <span class="text-yellow-400">☀️</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q3" value="2" class="form-radio" />
+              <span class="ml-2"
+                >Rare <span class="text-orange-400">✨</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q3" value="3" class="form-radio" />
+              <span class="ml-2"
+                >Moderate <span class="text-yellow-500">🌕</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q3" value="4" class="form-radio" />
+              <span class="ml-2"
+                >Frequent <span class="text-red-500">⚡</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q3" value="5" class="form-radio" />
+              <span class="ml-2"
+                >Very Frequent <span class="text-red-600">🔥</span></span
+              >
+            </label>
+          </div>
+        </div>
+
+        <div class="mb-6 bg-gray-700 p-4 rounded-lg">
+          <p class="font-medium text-xl mb-3">
+            <span class="mr-2 text-orange-400">🔥</span> 4. In the last 1-4
+            weeks, I felt easily agitated?
+          </p>
+          <div class="flex flex-wrap gap-4">
+            <label class="inline-flex items-center text-lg">
+              <input
+                type="radio"
+                name="q4"
+                value="1"
+                class="form-radio"
+                required
+              />
+              <span class="ml-2"
+                >Very Rare <span class="text-yellow-400">☀️</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q4" value="2" class="form-radio" />
+              <span class="ml-2"
+                >Rare <span class="text-orange-400">✨</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q4" value="3" class="form-radio" />
+              <span class="ml-2"
+                >Moderate <span class="text-yellow-500">🌕</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q4" value="4" class="form-radio" />
+              <span class="ml-2"
+                >Frequent <span class="text-red-500">⚡</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q4" value="5" class="form-radio" />
+              <span class="ml-2"
+                >Very Frequent <span class="text-red-600">🔥</span></span
+              >
+            </label>
+          </div>
+        </div>
+
+        <div class="mb-6 bg-gray-700 p-4 rounded-lg">
+          <p class="font-medium text-xl mb-3">
+            <span class="mr-2 text-purple-400">🔻</span> 5. In the last 1-4
+            weeks, I felt difficult to relax?
+          </p>
+          <div class="flex flex-wrap gap-4">
+            <label class="inline-flex items-center text-lg">
+              <input
+                type="radio"
+                name="q5"
+                value="1"
+                class="form-radio"
+                required
+              />
+              <span class="ml-2"
+                >Very Rare <span class="text-yellow-400">☀️</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q5" value="2" class="form-radio" />
+              <span class="ml-2"
+                >Rare <span class="text-orange-400">✨</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q5" value="3" class="form-radio" />
+              <span class="ml-2"
+                >Moderate <span class="text-yellow-500">🌕</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q5" value="4" class="form-radio" />
+              <span class="ml-2"
+                >Frequent <span class="text-red-500">⚡</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q5" value="5" class="form-radio" />
+              <span class="ml-2"
+                >Very Frequent <span class="text-red-600">🔥</span></span
+              >
+            </label>
+          </div>
+        </div>
+
+        <button
+          id="continue-to-performance"
+          class="mt-8 px-8 py-4 bg-blue-600 text-white text-xl font-bold rounded-lg shadow-xl hover:bg-blue-700 transition duration-300"
+        >
+          <span class="mr-2">🚀</span> Continue to Performance Assessment
+        </button>
+      </section>
+
+      <section id="performance-assessment" class="assessment-section hidden">
+        <h2 class="text-4xl font-semibold mb-6 text-green-300">
+          Your Performance Measure
+        </h2>
+        <p class="text-lg mb-8">
+          Rate how often these performance issues occurred in the past month:
+        </p>
+
+        <div class="mb-6 bg-gray-700 p-4 rounded-lg">
+          <p class="font-medium text-xl mb-3">
+            <span class="mr-2 text-purple-400">💼</span> 6. During the past 1-4
+            weeks, how often was your performance lower than most workers?
+          </p>
+          <div class="flex flex-wrap gap-4">
+            <label class="inline-flex items-center text-lg">
+              <input
+                type="radio"
+                name="q6"
+                value="1"
+                class="form-radio"
+                required
+              />
+              <span class="ml-2"
+                >Very Rare <span class="text-yellow-400">☀️</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q6" value="2" class="form-radio" />
+              <span class="ml-2"
+                >Rare <span class="text-orange-400">✨</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q6" value="3" class="form-radio" />
+              <span class="ml-2"
+                >Moderate <span class="text-yellow-500">🌕</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q6" value="4" class="form-radio" />
+              <span class="ml-2"
+                >Frequent <span class="text-red-500">⚡</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q6" value="5" class="form-radio" />
+              <span class="ml-2"
+                >Very Frequent <span class="text-red-600">🔥</span></span
+              >
+            </label>
+          </div>
+        </div>
+
+        <div class="mb-6 bg-gray-700 p-4 rounded-lg">
+          <p class="font-medium text-xl mb-3">
+            <span class="mr-2 text-blue-400">💻</span> 7. During the past 1-4
+            weeks, how often did you do no work when you should?
+          </p>
+          <div class="flex flex-wrap gap-4">
+            <label class="inline-flex items-center text-lg">
+              <input
+                type="radio"
+                name="q7"
+                value="1"
+                class="form-radio"
+                required
+              />
+              <span class="ml-2"
+                >Very Rare <span class="text-yellow-400">☀️</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q7" value="2" class="form-radio" />
+              <span class="ml-2"
+                >Rare <span class="text-orange-400">✨</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q7" value="3" class="form-radio" />
+              <span class="ml-2"
+                >Moderate <span class="text-yellow-500">🌕</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q7" value="4" class="form-radio" />
+              <span class="ml-2"
+                >Frequent <span class="text-red-500">⚡</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q7" value="5" class="form-radio" />
+              <span class="ml-2"
+                >Very Frequent <span class="text-red-600">🔥</span></span
+              >
+            </label>
+          </div>
+        </div>
+
+        <div class="mb-6 bg-gray-700 p-4 rounded-lg">
+          <p class="font-medium text-xl mb-3">
+            <span class="mr-2 text-red-400">❗</span> 8. During the past 1-4
+            weeks, how often did you not work carefully?
+          </p>
+          <div class="flex flex-wrap gap-4">
+            <label class="inline-flex items-center text-lg">
+              <input
+                type="radio"
+                name="q8"
+                value="1"
+                class="form-radio"
+                required
+              />
+              <span class="ml-2"
+                >Very Rare <span class="text-yellow-400">☀️</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q8" value="2" class="form-radio" />
+              <span class="ml-2"
+                >Rare <span class="text-orange-400">✨</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q8" value="3" class="form-radio" />
+              <span class="ml-2"
+                >Moderate <span class="text-yellow-500">🌕</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q8" value="4" class="form-radio" />
+              <span class="ml-2"
+                >Frequent <span class="text-red-500">⚡</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q8" value="5" class="form-radio" />
+              <span class="ml-2"
+                >Very Frequent <span class="text-red-600">🔥</span></span
+              >
+            </label>
+          </div>
+        </div>
+
+        <div class="mb-6 bg-gray-700 p-4 rounded-lg">
+          <p class="font-medium text-xl mb-3">
+            <span class="mr-2 text-blue-300">💎</span> 9. During the past 1-4
+            weeks, how often was your work quality low?
+          </p>
+          <div class="flex flex-wrap gap-4">
+            <label class="inline-flex items-center text-lg">
+              <input
+                type="radio"
+                name="q9"
+                value="1"
+                class="form-radio"
+                required
+              />
+              <span class="ml-2"
+                >Very Rare <span class="text-yellow-400">☀️</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q9" value="2" class="form-radio" />
+              <span class="ml-2"
+                >Rare <span class="text-orange-400">✨</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q9" value="3" class="form-radio" />
+              <span class="ml-2"
+                >Moderate <span class="text-yellow-500">🌕</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q9" value="4" class="form-radio" />
+              <span class="ml-2"
+                >Frequent <span class="text-red-500">⚡</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q9" value="5" class="form-radio" />
+              <span class="ml-2"
+                >Very Frequent <span class="text-red-600">🔥</span></span
+              >
+            </label>
+          </div>
+        </div>
+
+        <div class="mb-6 bg-gray-700 p-4 rounded-lg">
+          <p class="font-medium text-xl mb-3">
+            <span class="mr-2 text-green-300">🌲</span> 10. During the past 1-4
+            weeks, how often did you not fully concentrate?
+          </p>
+          <div class="flex flex-wrap gap-4">
+            <label class="inline-flex items-center text-lg">
+              <input
+                type="radio"
+                name="q10"
+                value="1"
+                class="form-radio"
+                required
+              />
+              <span class="ml-2"
+                >Very Rare <span class="text-yellow-400">☀️</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q10" value="2" class="form-radio" />
+              <span class="ml-2"
+                >Rare <span class="text-orange-400">✨</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q10" value="3" class="form-radio" />
+              <span class="ml-2"
+                >Moderate <span class="text-yellow-500">🌕</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q10" value="4" class="form-radio" />
+              <span class="ml-2"
+                >Frequent <span class="text-red-500">⚡</span></span
+              >
+            </label>
+            <label class="inline-flex items-center text-lg">
+              <input type="radio" name="q10" value="5" class="form-radio" />
+              <span class="ml-2"
+                >Very Frequent <span class="text-red-600">🔥</span></span
+              >
+            </label>
+          </div>
+        </div>
+
+        <button
+          id="calculate-results"
+          class="mt-8 px-8 py-4 bg-green-600 text-white text-xl font-bold rounded-lg shadow-xl hover:bg-green-700 transition duration-300"
+        >
+          <span class="mr-2">✨</span> Calculate My Stresformance
+        </button>
+      </section>
+
+      <section id="results-display" class="assessment-section hidden">
+        <h2 class="text-4xl font-semibold mb-6 text-purple-300 text-center">
+          Your Stresformance Results
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+          <div class="bg-white p-6 rounded-lg shadow-xl text-center">
+            <div class="flex items-center justify-center mb-4">
+              <span class="text-red-600 text-3xl mr-3">🧠</span>
+              <h3 class="text-3xl font-bold text-gray-900">Stress Level</h3>
+            </div>
+            <p
+              id="stress-level-text"
+              class="text-4xl font-extrabold text-red-700 mb-2"
+            >
+              --
+            </p>
+            <p class="text-xl text-gray-600">
+              Mean Value: <span id="stress-mean-value">--</span>
+            </p>
+          </div>
+
+          <div class="bg-white p-6 rounded-lg shadow-xl text-center">
+            <div class="flex items-center justify-center mb-4">
+              <span class="text-blue-600 text-3xl mr-3">💼</span>
+              <h3 class="text-3xl font-bold text-gray-900">
+                Performance Level
+              </h3>
+            </div>
+            <p
+              id="performance-level-text"
+              class="text-4xl font-extrabold text-green-700 mb-2"
+            >
+              --
+            </p>
+            <p class="text-xl text-gray-600">
+              Mean Value: <span id="performance-mean-value">--</span>
+            </p>
+          </div>
+        </div>
+
+        <div
+          class="flex flex-col md:flex-row justify-around items-center gap-12 mb-12"
+        >
+          <div class="flex flex-col items-center">
+            <p class="text-2xl font-semibold mb-4 text-red-400">Stress Gauge</p>
+            <div
+              class="gauge-container bg-gray-700 relative flex items-center justify-center rounded-b-full shadow-inner"
+            >
+              <div id="stress-gauge-fill" class="gauge-fill"></div>
+              <div id="stress-gauge-value" class="gauge-value-display">--</div>
+            </div>
+            <div
+              class="flex justify-between w-full max-w-[200px] mt-2 text-sm text-gray-400 transform rotate(180deg)"
+            >
+              <span>1</span>
+              <span>2.5</span>
+              <span>5</span>
+            </div>
+          </div>
+
+          <div class="flex flex-col items-center">
+            <p class="text-2xl font-semibold mb-4 text-green-400">
+              Performance Gauge
+            </p>
+            <div
+              class="gauge-container bg-gray-700 relative flex items-center justify-center rounded-b-full shadow-inner"
+            >
+              <div id="performance-gauge-fill" class="gauge-fill"></div>
+              <div id="performance-gauge-value" class="gauge-value-display">
+                --
+              </div>
+            </div>
+            <div
+              class="flex justify-between w-full max-w-[200px] mt-2 text-sm text-gray-400 transform rotate(180deg)"
+            >
+              <span>1</span>
+              <span>2.5</span>
+              <span>5</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-purple-700 p-8 rounded-lg shadow-xl text-center">
+          <h3 class="text-3xl font-bold mb-4 text-white">
+            Recommended Employer Action:
+          </h3>
+          <p id="employer-recommendation" class="text-xl text-white">--</p>
+        </div>
+
+        <button
+          id="start-new-assessment"
+          class="mt-12 px-8 py-4 bg-gray-600 text-white text-xl font-bold rounded-lg shadow-xl hover:bg-gray-700 transition duration-300"
+        >
+          <span class="mr-2">🔄</span> Start New Assessment
+        </button>
+      </section>
+    </div>
+
+    <script src="script.js"></script>
   </body>
 </html>
