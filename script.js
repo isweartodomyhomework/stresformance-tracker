@@ -33,6 +33,11 @@ document.addEventListener("DOMContentLoaded", () => {
     "performance-gauge-value"
   );
 
+  const stressGaugeNeedle = document.getElementById("stress-gauge-needle");
+  const performanceGaugeNeedle = document.getElementById(
+    "performance-gauge-needle"
+  );
+
   let stressAnswers = {};
   let performanceAnswers = {};
 
