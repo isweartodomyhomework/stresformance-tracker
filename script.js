@@ -26,7 +26,8 @@ document.addEventListener("DOMContentLoaded", () => {
     "employer-recommendation"
   );
 
-  const stressGaugeFill = document.getElementById("stress-gauge-fill");
+  const stressGaugeFill = (document =
+    document.getElementById("stress-gauge-fill"));
   const stressGaugeValue = document.getElementById("stress-gauge-value");
   const performanceGaugeFill = document.getElementById(
     "performance-gauge-fill"
@@ -54,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- Data and Logic ---
 
-  // Line changed: Define variables for question counts 🟣🟡🟣🟡🟣
+  // Define variables for question counts
   const numStressQuestions = 5;
   const numPerformanceQuestions = 6;
   const totalQuestions = numStressQuestions + numPerformanceQuestions; // Overall total questions
@@ -103,7 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
       "Mental health is excellent, but performance needs monitoring",
 
     "Low_Very High": "Mental health is good and performance is excellent",
-    Low_High: "Mental health is good, but performance needs training",
+    Low_High: "Mental health is good and performance are good",
     Low_Moderate: "Mental health is good, but performance needs monitoring",
     Low_Low: "Mental health is good, but performance needs monitoring",
     "Low_Very Low": "Mental health is good, but performance needs monitoring",
@@ -121,9 +122,10 @@ document.addEventListener("DOMContentLoaded", () => {
     High_High: "Mental health needs counseling and performance needs training",
     High_Moderate:
       "Mental health needs counseling and performance needs monitoring",
+    // Line changed: Reverted recommendation for High Stress, Low Performance to match the image
     High_Low: "Mental health needs counseling, but performance is good",
     "High_Very Low":
-      "Mental health needs counseling, but performance is excellent", // Typo in screenshot? Should be low perf
+      "Mental health needs counselling, and performance needs training",
 
     "Very High_Very High":
       "Mental health needs counseling, but performance is excellent",
@@ -133,7 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
       "Mental health needs counseling and performance needs monitoring",
     "Very High_Low": "Mental health needs counseling, but performance is good",
     "Very High_Very Low":
-      "Mental health needs counseling and performance is excellent", // Typo in screenshot? Should be low perf
+      "Mental health needs counselling, and performance needs training",
   };
 
   // Helper function to show custom modal
@@ -181,7 +183,7 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   }
 
-  // Line changed: Updated function to control tank fill and color for correct level representation
+  // Updated function to control tank fill and color for correct level representation
   function updateGauge(gaugeFillElement, gaugeValueElement, mean, type) {
     let minVal, maxVal;
     if (type === "stress") {
@@ -192,14 +194,13 @@ document.addEventListener("DOMContentLoaded", () => {
       maxVal = 5; // Max value for performance questions is 5
     }
 
-    // Calculate fill percentage:
-    // For stress: higher mean = higher fill (bad state)
-    // For performance: higher mean = higher fill (good state)
     let fillPercentage;
     if (type === "stress") {
+      // Stress: higher mean = higher fill (bad state)
       fillPercentage = ((mean - minVal) / (maxVal - minVal)) * 100;
     } else if (type === "performance") {
-      fillPercentage = ((mean - minVal) / (maxVal - minVal)) * 100;
+      // Performance: lower mean = higher fill (good state)
+      fillPercentage = 100 - ((mean - minVal) / (maxVal - minVal)) * 100;
     }
 
     // Ensure percentage is within 0-100 range
@@ -211,8 +212,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Determine color based on mean and type (stress/performance) for the fill
     let color = "";
     if (type === "stress") {
-      // For stress, lower mean (less stress) is good (green), higher mean (more stress) is bad (red)
-      // Since fill is now directly proportional to mean (high mean = high fill),
+      // Stress: lower mean (less stress) is good (green), higher mean (more stress) is bad (red)
+      // Since fill is directly proportional to mean (high mean = high fill),
       // we want green at low fill, yellow at moderate, red at high fill.
       if (mean <= 2.0)
         color = "#22c55e"; // green-500 (low stress, low fill, good)
@@ -220,15 +221,14 @@ document.addEventListener("DOMContentLoaded", () => {
         color = "#facc15"; // yellow-500 (moderate stress, moderate fill)
       else color = "#ef4444"; // red-500 (high stress, high fill, bad)
     } else if (type === "performance") {
-      // For performance, higher mean (better performance) is good (green), lower mean (worse performance) is bad (red)
-      // Since fill is now directly proportional to mean (high mean = high fill),
-      // we want red at low fill, yellow at moderate, green at high fill.
-      // The thresholds for performance are based on the 1-5 scale for the mean.
+      // Performance: lower mean (better performance) is good (green), higher mean (worse performance) is bad (red)
+      // Since fill is now inversely proportional to mean (low mean = high fill),
+      // we want green at high fill, yellow at moderate, red at low fill.
       if (mean <= 2.0)
-        color = "#ef4444"; // red-500 (low performance, low fill, bad)
+        color = "#22c55e"; // green-500 (high performance, high fill, good)
       else if (mean <= 3.5)
         color = "#facc15"; // yellow-500 (moderate performance, moderate fill)
-      else color = "#22c55e"; // green-500 (high performance, high fill, good)
+      else color = "#ef4444"; // red-500 (low performance, low fill, bad)
     }
     gaugeFillElement.style.backgroundColor = color;
   }
@@ -243,7 +243,7 @@ document.addEventListener("DOMContentLoaded", () => {
     );
     console.log("Stress radios checked:", stressRadios.length);
 
-    // Line changed: Use numStressQuestions variable for validation
+    // Use numStressQuestions variable for validation
     if (stressRadios.length !== numStressQuestions) {
       showModal(
         `Please answer all ${numStressQuestions} stress assessment questions before continuing.`
@@ -266,7 +266,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const performanceRadios = document.querySelectorAll(
       '#performance-assessment input[type="radio"]:checked'
     );
-    // Line changed: Use numPerformanceQuestions variable for validation
+    // Use numPerformanceQuestions variable for validation
     if (performanceRadios.length !== numPerformanceQuestions) {
       showModal(
         `Please answer all ${numPerformanceQuestions} performance assessment questions before calculating results.`
@@ -282,12 +282,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Calculate means
     const allStressValues = Object.values(stressAnswers);
-    // Line changed: Use numStressQuestions variable for mean calculation
+    // Use numStressQuestions variable for mean calculation
     const stressMean =
       allStressValues.reduce((a, b) => a + b, 0) / numStressQuestions;
 
     const allPerformanceValues = Object.values(performanceAnswers);
-    // Line changed: Use numPerformanceQuestions variable for mean calculation
+    // Use numPerformanceQuestions variable for mean calculation
     const performanceMean =
       allPerformanceValues.reduce((a, b) => a + b, 0) / numPerformanceQuestions;
 
