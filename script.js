@@ -35,10 +35,6 @@ document.addEventListener("DOMContentLoaded", () => {
     "performance-gauge-value"
   );
 
-  // Removed unused references to stressGaugeNeedle and performanceGaugeNeedle
-  // const stressGaugeNeedle = document.getElementById("stress-gauge-needle");
-  // const performanceGaugeNeedle = document.getElementById("performance-gauge-needle");
-
   // Custom Modal elements
   const customModal = document.getElementById("custom-modal");
   const modalMessage = document.getElementById("modal-message");
@@ -143,8 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
       customModal.classList.add("flex"); // Ensure flexbox for centering
     } else {
       console.error("Custom modal element not found. Cannot show modal.");
-      // Fallback to alert if modal not found, for debugging purposes
-      alert(message); // Temporarily using alert for debugging if modal not found
+      alert(message); // Fallback to alert if modal not found, for debugging purposes
     }
   }
 
@@ -181,26 +176,56 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   }
 
-  // New function to update gauge visually
+  // Line changed: Updated function to control tank fill and color for correct level representation
   function updateGauge(gaugeFillElement, gaugeValueElement, mean, type) {
-    // Map mean (1-5) to a rotation angle (0-180 degrees)
-    // Mean 1 = 0 degrees, Mean 5 = 180 degrees
-    const angle = (mean - 1) * (180 / 4); // (mean - min) * (max_angle / range)
-    gaugeFillElement.style.transform = `rotate(${angle}deg)`;
+    let minVal, maxVal;
+    if (type === "stress") {
+      minVal = 1;
+      maxVal = 5;
+    } else if (type === "performance") {
+      minVal = 1;
+      maxVal = 5; // Max value for performance questions is 5
+    }
+
+    // Calculate fill percentage:
+    // For stress: higher mean = higher fill (bad state)
+    // For performance: higher mean = higher fill (good state)
+    let fillPercentage;
+    if (type === "stress") {
+      // Line changed: Stress fill is now directly proportional to mean
+      fillPercentage = ((mean - minVal) / (maxVal - minVal)) * 100;
+    } else if (type === "performance") {
+      fillPercentage = ((mean - minVal) / (maxVal - minVal)) * 100;
+    }
+
+    // Ensure percentage is within 0-100 range
+    const clampedFillPercentage = Math.max(0, Math.min(100, fillPercentage));
+
+    gaugeFillElement.style.height = `${clampedFillPercentage}%`;
     gaugeValueElement.textContent = mean.toFixed(2);
 
-    // Determine color based on mean and type (stress/performance)
+    // Determine color based on mean and type (stress/performance) for the fill
     let color = "";
     if (type === "stress") {
-      if (mean <= 2) color = "#22c55e"; // green-500 (low stress)
-      else if (mean <= 3.5) color = "#facc15"; // yellow-500 (moderate stress)
-      else color = "#ef4444"; // red-500 (high stress)
-    } else if (type === "performance") {
-      // For performance, low mean (few issues) is good (green), high mean (many issues) is bad (red)
-      if (mean <= 2) color = "#22c55e"; // green-500 (high performance)
+      // Line changed: Adjusted color logic for stress
+      // For stress, lower mean (less stress) is good (green), higher mean (more stress) is bad (red)
+      // Since fill is now directly proportional to mean (high mean = high fill),
+      // we want green at low fill, yellow at moderate, red at high fill.
+      if (mean <= 2.0)
+        color = "#22c55e"; // green-500 (low stress, low fill, good)
       else if (mean <= 3.5)
-        color = "#facc15"; // yellow-500 (moderate performance)
-      else color = "#ef4444"; // red-500 (low performance)
+        color = "#facc15"; // yellow-500 (moderate stress, moderate fill)
+      else color = "#ef4444"; // red-500 (high stress, high fill, bad)
+    } else if (type === "performance") {
+      // For performance, higher mean (better performance) is good (green), lower mean (worse performance) is bad (red)
+      // Since fill is now directly proportional to mean (high mean = high fill),
+      // we want red at low fill, yellow at moderate, green at high fill.
+      // The thresholds for performance are based on the 1-5 scale for the mean.
+      if (mean <= 2.0)
+        color = "#ef4444"; // red-500 (low performance, low fill, bad)
+      else if (mean <= 3.5)
+        color = "#facc15"; // yellow-500 (moderate performance, moderate fill)
+      else color = "#22c55e"; // green-500 (high performance, high fill, good)
     }
     gaugeFillElement.style.backgroundColor = color;
   }
@@ -237,7 +262,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const performanceRadios = document.querySelectorAll(
       '#performance-assessment input[type="radio"]:checked'
     );
-    // Line changed: Updated expected number of performance questions from 5 to 6
     if (performanceRadios.length !== 6) {
       showModal(
         "Please answer all performance assessment questions before calculating results."
@@ -278,7 +302,6 @@ document.addEventListener("DOMContentLoaded", () => {
     performanceMeanValue.textContent = performanceMean.toFixed(2);
     employerRecommendation.textContent = finalRecommendation;
 
-    // Update Gauges
     updateGauge(stressGaugeFill, stressGaugeValue, stressMean, "stress");
     updateGauge(
       performanceGaugeFill,
@@ -314,4 +337,3 @@ document.addEventListener("DOMContentLoaded", () => {
   performanceAssessmentSection.classList.add("hidden");
   resultsDisplaySection.classList.add("hidden");
 });
- 

@@ -6,49 +6,46 @@
     <title>Stresformance Tracker</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
-      /* Custom styles for the gauges - we'll refine these */
+      /* Custom styles for the gauges - REVISED for tank gauge and width */
       .gauge-container {
-        width: 200px;
-        height: 100px; /* Half of width for semi-circle */
+        /* Line changed: Adjusted width to visually fit better */
+        width: 360px; /* Adjusted width to better match the result boxes */
+        height: 150px; /* Height of the tank */
+        border: 2px solid #555; /* Border for the tank */
+        border-radius: 8px; /* Slightly rounded corners for the tank */
         overflow: hidden;
         position: relative;
-        /* Using Tailwind's rounded-full for half circle on bottom */
-        border-bottom-left-radius: 9999px; /* Equivalent to rounded-full for bottom half */
-        border-bottom-right-radius: 9999px;
-        transform: rotate(180deg); /* Rotate to make it appear upright */
+        background-color: #333; /* Background for empty part of the tank */
+        display: flex;
+        align-items: flex-end; /* Align fill to the bottom */
+        justify-content: center;
       }
+
       .gauge-fill {
         position: absolute;
-        top: 0;
+        bottom: 0;
         left: 0;
-        width: 200%; /* Double width for the full circle effect */
-        height: 200%; /* Double height for the full circle effect */
-        transform-origin: center center; /* Rotate around the center of the full circle */
-        border-radius: 9999px; /* Make it a circle */
-        transform: rotate(
-          0deg
-        ); /* Initial rotation, JavaScript will change this */
-        transition: transform 0.5s ease-in-out,
-          background-color 0.5s ease-in-out; /* Smooth transition */
+        width: 100%;
+        height: 0%; /* Initial height, will be set by JS */
+        background-color: #22c55e; /* Default green fill */
+        transition: height 0.5s ease-in-out, background-color 0.5s ease-in-out; /* Smooth transition */
       }
+
       .gauge-value-display {
         position: absolute;
+        top: 50%; /* Center vertically within the tank */
         left: 50%;
-        bottom: 10px; /* Adjust based on gauge size */
-        transform: translateX(-50%) rotate(180deg); /* Counter-rotate value */
-        font-size: 2.5rem; /* Large text for the number */
+        transform: translate(-50%, -50%); /* Adjust for centering */
+        font-size: 1.5rem;
         font-weight: bold;
-        color: white; /* Or text-gray-800 */
+        color: white; /* Text color over the fill */
         z-index: 10; /* Ensure it's above the fill */
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Shadow for readability */
       }
+
+      /* Remove gauge-label as it's not applicable for tank gauge */
       .gauge-label {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%) rotate(180deg); /* Counter-rotate label */
-        color: white;
-        font-size: 1.25rem;
-        z-index: 5;
+        display: none;
       }
 
       /* Adjusting form-radio style for better visibility with Tailwind */
@@ -792,40 +789,26 @@
           class="flex flex-col md:flex-row justify-around items-center gap-12 mb-12"
         >
           <div class="flex flex-col items-center">
-            <p class="text-2xl font-semibold mb-4 text-red-400">Stress Gauge</p>
+            <p class="text-2xl font-semibold mb-4 text-red-400">Stress Meter</p>
             <div
-              class="gauge-container bg-gray-700 relative flex items-center justify-center rounded-b-full shadow-inner"
+              class="gauge-container bg-gray-700 relative flex items-center justify-center shadow-inner"
             >
               <div id="stress-gauge-fill" class="gauge-fill"></div>
               <div id="stress-gauge-value" class="gauge-value-display">--</div>
-            </div>
-            <div
-              class="flex justify-between w-full max-w-[200px] mt-2 text-sm text-gray-400 transform rotate(180deg)"
-            >
-              <span>1</span>
-              <span>2.5</span>
-              <span>5</span>
             </div>
           </div>
 
           <div class="flex flex-col items-center">
             <p class="text-2xl font-semibold mb-4 text-green-400">
-              Performance Gauge
+              Performance Meter
             </p>
             <div
-              class="gauge-container bg-gray-700 relative flex items-center justify-center rounded-b-full shadow-inner"
+              class="gauge-container bg-gray-700 relative flex items-center justify-center shadow-inner"
             >
               <div id="performance-gauge-fill" class="gauge-fill"></div>
               <div id="performance-gauge-value" class="gauge-value-display">
                 --
               </div>
-            </div>
-            <div
-              class="flex justify-between w-full max-w-[200px] mt-2 text-sm text-gray-400 transform rotate(180deg)"
-            >
-              <span>1</span>
-              <span>3</span>
-              <span>6</span>
             </div>
           </div>
         </div>
