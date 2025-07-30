@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return "Very Low"; // Most issues means very low performance
   }
 
-  // Recommendation Table (from your screenshot)
+  // Recommendation Table (from your screenshot) - REVISED FOR LOGIC
   const recommendations = {
     "Very Low_Very High":
       "Mental health is excellent and performance is excellent",
@@ -99,31 +99,30 @@ document.addEventListener("DOMContentLoaded", () => {
     "Very Low_Moderate":
       "Mental health is excellent, but performance needs monitoring",
     "Very Low_Low":
-      "Mental health is excellent, but performance needs monitoring",
+      "Mental health is excellent, and performance needs training", // Revised for consistency
     "Very Low_Very Low":
-      "Mental health is excellent, but performance needs monitoring",
+      "Mental health is excellent, and performance needs training", // Revised for consistency
 
     "Low_Very High": "Mental health is good and performance is excellent",
     Low_High: "Mental health is good and performance are good",
     Low_Moderate: "Mental health is good, but performance needs monitoring",
-    Low_Low: "Mental health is good, but performance needs monitoring",
-    "Low_Very Low": "Mental health is good, but performance needs monitoring",
+    Low_Low: "Mental health is good, and performance needs training", // Revised for consistency
+    "Low_Very Low": "Mental health is good, and performance needs training", // Revised for consistency
 
     "Moderate_Very High":
       "Mental health needs monitoring, but performance is excellent",
     Moderate_High:
       "Mental health needs monitoring and performance needs training",
     Moderate_Moderate: "Mental health and performance need monitoring",
-    Moderate_Low: "Mental health and performance need monitoring",
-    "Moderate_Very Low": "Mental health and performance need monitoring",
+    Moderate_Low: "Mental health and performance need training", // Revised for consistency
+    "Moderate_Very Low": "Mental health and performance need training", // Revised for consistency
 
     "High_Very High":
       "Mental health needs counseling, but performance is excellent",
     High_High: "Mental health needs counseling and performance needs training",
     High_Moderate:
       "Mental health needs counseling and performance needs monitoring",
-    // Line changed: Reverted recommendation for High Stress, Low Performance to match the image
-    High_Low: "Mental health needs counseling, but performance is good",
+    High_Low: "Mental health needs counseling and performance needs training", // Revised for consistency
     "High_Very Low":
       "Mental health needs counselling, and performance needs training",
 
@@ -133,7 +132,8 @@ document.addEventListener("DOMContentLoaded", () => {
       "Mental health needs counseling and performance needs training",
     "Very High_Moderate":
       "Mental health needs counseling and performance needs monitoring",
-    "Very High_Low": "Mental health needs counseling, but performance is good",
+    "Very High_Low":
+      "Mental health needs counseling and performance needs training", // Revised for consistency
     "Very High_Very Low":
       "Mental health needs counselling, and performance needs training",
   };
