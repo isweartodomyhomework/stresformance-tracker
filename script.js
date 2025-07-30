@@ -54,6 +54,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- Data and Logic ---
 
+  // Line changed: Define variables for question counts 🟣🟡🟣🟡🟣
+  const numStressQuestions = 5;
+  const numPerformanceQuestions = 6;
+  const totalQuestions = numStressQuestions + numPerformanceQuestions; // Overall total questions
+
   // Define the value mapping for radio buttons (already 1-5, simple)
   // Define the level thresholds
   const LEVEL_THRESHOLDS = {
@@ -192,7 +197,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // For performance: higher mean = higher fill (good state)
     let fillPercentage;
     if (type === "stress") {
-      // Line changed: Stress fill is now directly proportional to mean
       fillPercentage = ((mean - minVal) / (maxVal - minVal)) * 100;
     } else if (type === "performance") {
       fillPercentage = ((mean - minVal) / (maxVal - minVal)) * 100;
@@ -207,7 +211,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // Determine color based on mean and type (stress/performance) for the fill
     let color = "";
     if (type === "stress") {
-      // Line changed: Adjusted color logic for stress
       // For stress, lower mean (less stress) is good (green), higher mean (more stress) is bad (red)
       // Since fill is now directly proportional to mean (high mean = high fill),
       // we want green at low fill, yellow at moderate, red at high fill.
@@ -240,9 +243,10 @@ document.addEventListener("DOMContentLoaded", () => {
     );
     console.log("Stress radios checked:", stressRadios.length);
 
-    if (stressRadios.length !== 5) {
+    // Line changed: Use numStressQuestions variable for validation
+    if (stressRadios.length !== numStressQuestions) {
       showModal(
-        "Please answer all stress assessment questions before continuing."
+        `Please answer all ${numStressQuestions} stress assessment questions before continuing.`
       );
       return;
     }
@@ -262,9 +266,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const performanceRadios = document.querySelectorAll(
       '#performance-assessment input[type="radio"]:checked'
     );
-    if (performanceRadios.length !== 6) {
+    // Line changed: Use numPerformanceQuestions variable for validation
+    if (performanceRadios.length !== numPerformanceQuestions) {
       showModal(
-        "Please answer all performance assessment questions before calculating results."
+        `Please answer all ${numPerformanceQuestions} performance assessment questions before calculating results.`
       );
       return;
     }
@@ -277,13 +282,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Calculate means
     const allStressValues = Object.values(stressAnswers);
+    // Line changed: Use numStressQuestions variable for mean calculation
     const stressMean =
-      allStressValues.reduce((a, b) => a + b, 0) / allStressValues.length;
+      allStressValues.reduce((a, b) => a + b, 0) / numStressQuestions;
 
     const allPerformanceValues = Object.values(performanceAnswers);
+    // Line changed: Use numPerformanceQuestions variable for mean calculation
     const performanceMean =
-      allPerformanceValues.reduce((a, b) => a + b, 0) /
-      allPerformanceValues.length;
+      allPerformanceValues.reduce((a, b) => a + b, 0) / numPerformanceQuestions;
 
     // Determine levels
     const calculatedStressLevel = getStressLevel(stressMean);
