@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
+  console.log("DOM Content Loaded: Stresformance Tracker script is running.");
+
   // Get references to elements
   const stressAssessmentSection = document.getElementById("stress-assessment");
   const performanceAssessmentSection = document.getElementById(
@@ -33,10 +35,23 @@ document.addEventListener("DOMContentLoaded", () => {
     "performance-gauge-value"
   );
 
-  const stressGaugeNeedle = document.getElementById("stress-gauge-needle");
-  const performanceGaugeNeedle = document.getElementById(
-    "performance-gauge-needle"
-  );
+  // Removed unused references to stressGaugeNeedle and performanceGaugeNeedle
+  // const stressGaugeNeedle = document.getElementById("stress-gauge-needle");
+  // const performanceGaugeNeedle = document.getElementById("performance-gauge-needle");
+
+  // Custom Modal elements
+  const customModal = document.getElementById("custom-modal");
+  const modalMessage = document.getElementById("modal-message");
+  const modalOkButton = document.getElementById("modal-ok-button");
+  const closeModalButton = document.querySelector(".close-button");
+
+  // Debugging for modal elements
+  console.log("Modal elements found:", {
+    customModal: customModal,
+    modalMessage: modalMessage,
+    modalOkButton: modalOkButton,
+    closeModalButton: closeModalButton,
+  });
 
   let stressAnswers = {};
   let performanceAnswers = {};
@@ -120,46 +135,50 @@ document.addEventListener("DOMContentLoaded", () => {
       "Mental health needs counseling and performance is excellent", // Typo in screenshot? Should be low perf
   };
 
-  function calculateMean(questionsPrefix) {
-    let sum = 0;
-    let count = 0;
-    const radios = document.querySelectorAll(
-      `input[name^="${questionsPrefix}"]`
-    );
-    let allAnswered = true;
+  // Helper function to show custom modal
+  function showModal(message) {
+    if (customModal) {
+      modalMessage.textContent = message;
+      customModal.classList.remove("hidden");
+      customModal.classList.add("flex"); // Ensure flexbox for centering
+    } else {
+      console.error("Custom modal element not found. Cannot show modal.");
+      // Fallback to alert if modal not found, for debugging purposes
+      alert(message); // Temporarily using alert for debugging if modal not found
+    }
+  }
 
-    radios.forEach((radio) => {
-      if (radio.checked) {
-        sum += parseInt(radio.value);
-        // Ensure each question is counted only once, even if multiple radio buttons are for the same question
-        // For this, we can check if the question group has been answered
-        const qName = radio.name;
-        if (!answers[`${questionsPrefix}_${qName}`]) {
-          count++;
-          answers[`${questionsPrefix}_${qName}`] = true; // Mark question as answered
-        }
+  // Helper function to hide custom modal
+  function hideModal() {
+    if (customModal) {
+      customModal.classList.add("hidden");
+      customModal.classList.remove("flex");
+    }
+  }
+
+  // Event listeners for custom modal
+  if (modalOkButton) {
+    modalOkButton.addEventListener("click", hideModal);
+  } else {
+    console.error("modalOkButton not found. Cannot attach event listener.");
+  }
+
+  if (closeModalButton) {
+    closeModalButton.addEventListener("click", hideModal);
+  } else {
+    console.error("closeModalButton not found. Cannot attach event listener.");
+  }
+
+  if (customModal) {
+    window.addEventListener("click", (event) => {
+      if (event.target == customModal) {
+        hideModal();
       }
     });
-
-    // Reset the answers tracking object for the current calculation
-    let answers = {};
-    for (let i = 1; i <= (questionsPrefix === "q" ? 5 : 10); i++) {
-      // For stress (q1-q5) or performance (q6-q10)
-      const questionRadios = document.querySelectorAll(
-        `input[name="${questionsPrefix}${i}"]:checked`
-      );
-      if (questionRadios.length === 0) {
-        allAnswered = false;
-        break;
-      }
-      sum += parseInt(questionRadios[0].value);
-      count++;
-    }
-
-    if (!allAnswered) {
-      return null; // Indicates not all questions were answered
-    }
-    return sum / count || 0; // Return 0 if count is 0 to avoid NaN
+  } else {
+    console.error(
+      "customModal not found. Cannot attach window click listener."
+    );
   }
 
   // New function to update gauge visually
@@ -189,12 +208,17 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- Event Listeners and Flow Control ---
 
   continueButton.addEventListener("click", () => {
+    console.log("Continue button clicked!");
+
     const stressRadios = document.querySelectorAll(
       '#stress-assessment input[type="radio"]:checked'
     );
+    console.log("Stress radios checked:", stressRadios.length);
+
     if (stressRadios.length !== 5) {
-      // Assuming 5 stress questions
-      alert("Please answer all stress assessment questions before continuing.");
+      showModal(
+        "Please answer all stress assessment questions before continuing."
+      );
       return;
     }
 
@@ -213,9 +237,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const performanceRadios = document.querySelectorAll(
       '#performance-assessment input[type="radio"]:checked'
     );
-    if (performanceRadios.length !== 5) {
-      // Assuming 5 performance questions (Q6-Q10)
-      alert(
+    // Line changed: Updated expected number of performance questions from 5 to 6
+    if (performanceRadios.length !== 6) {
+      showModal(
         "Please answer all performance assessment questions before calculating results."
       );
       return;
@@ -290,3 +314,4 @@ document.addEventListener("DOMContentLoaded", () => {
   performanceAssessmentSection.classList.add("hidden");
   resultsDisplaySection.classList.add("hidden");
 });
+ 

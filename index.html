@@ -85,6 +85,52 @@
       .form-radio:focus {
         box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5); /* focus-ring for accessibility */
       }
+
+      /* Custom modal styles */
+      .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 100; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgba(0, 0, 0, 0.7); /* Black w/ opacity */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .modal-content {
+        background-color: #1f2937; /* gray-800 */
+        margin: auto;
+        padding: 2.5rem; /* p-10 */
+        border-radius: 0.75rem; /* rounded-lg */
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-xl */
+        width: 90%;
+        max-width: 400px;
+        text-align: center;
+        position: relative;
+      }
+
+      .close-button {
+        position: absolute;
+        top: 1rem;
+        right: 1.5rem;
+        color: #9ca3af; /* gray-400 */
+        font-size: 2rem;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      .close-button:hover,
+      .close-button:focus {
+        color: #e5e7eb; /* gray-200 */
+        text-decoration: none;
+        cursor: pointer;
+      }
     </style>
   </head>
   <body
@@ -104,14 +150,24 @@
         <h2 class="text-4xl font-semibold mb-6 text-blue-300">
           Your Stress Measure
         </h2>
-        <p class="text-lg mb-8">
-          Rate how often you've experienced these feelings in the past month:
+        <p class="font-medium text-lg mb-8">
+          Dalam tempoh sebulan yang lalu, sila nilaikan kekerapan anda mengalami
+          perasaan berikut: <br />
+          <small>
+            <i>
+              Rate how often you've experienced these feelings in the past
+              month:
+            </i>
+          </small>
         </p>
 
         <div class="mb-6 bg-gray-700 p-4 rounded-lg">
-          <p class="font-medium text-xl mb-3">
-            <span class="mr-2 text-pink-400">🧠</span> 1. In the last 1-4 weeks,
-            I found it hard to wind down?
+          <p class="font-medium text-lg mb-3">
+            <span class="mr-2 text-pink-400">🧠</span> 1. Dalam tempoh 1-4
+            minggu terakhir, saya rasa susah untuk bertenang? <br />
+            <small>
+              <i>In the last 1-4 weeks, I found it hard to wind/calm down?</i>
+            </small>
           </p>
           <div class="flex flex-wrap gap-4">
             <label class="inline-flex items-center text-lg w-full sm:w-auto">
@@ -154,9 +210,15 @@
         </div>
 
         <div class="mb-6 bg-gray-700 p-4 rounded-lg">
-          <p class="font-medium text-xl mb-3">
-            <span class="mr-2 text-yellow-400">💥</span> 2. In the last 1-4
-            weeks, I tended to over-react to situations?
+          <p class="font-medium text-lg mb-3">
+            <span class="mr-2 text-yellow-400">💥</span> 2. Dalam tempoh 1-4
+            minggu terakhir, saya cenderung untuk bertindak balas secara
+            berlebihan kepada sesuatu keadaan? <br />
+            <small>
+              <i
+                >In the last 1-4 weeks, I tended to over-react to situations?</i
+              >
+            </small>
           </p>
           <div class="flex flex-wrap gap-4">
             <label class="inline-flex items-center text-lg w-full sm:w-auto">
@@ -199,9 +261,12 @@
         </div>
 
         <div class="mb-6 bg-gray-700 p-4 rounded-lg">
-          <p class="font-medium text-xl mb-3">
-            <span class="mr-2 text-blue-400">🌀</span> 3. In the last 1-4 weeks,
-            I felt restless?
+          <p class="font-medium text-lg mb-3">
+            <span class="mr-2 text-blue-400">🌀</span> 3. Dalam tempoh 1-4
+            minggu terakhir, saya rasa terlalu gelisah? <br />
+            <small>
+              <i>In the last 1-4 weeks, I felt too restless?</i>
+            </small>
           </p>
           <div class="flex flex-wrap gap-4">
             <label class="inline-flex items-center text-lg w-full sm:w-auto">
@@ -244,9 +309,12 @@
         </div>
 
         <div class="mb-6 bg-gray-700 p-4 rounded-lg">
-          <p class="font-medium text-xl mb-3">
-            <span class="mr-2 text-orange-400">⚡</span> 4. In the last 1-4
-            weeks, I felt easily agitated?
+          <p class="font-medium text-lg mb-3">
+            <span class="mr-2 text-orange-400">⚡</span> 4. Dalam tempoh 1-4
+            minggu terakhir, saya dapati rasa mudah gelisah? <br />
+            <small>
+              <i>In the last 1-4 weeks, I felt easily agitated (disturbed)? </i>
+            </small>
           </p>
           <div class="flex flex-wrap gap-4">
             <label class="inline-flex items-center text-lg w-full sm:w-auto">
@@ -289,9 +357,12 @@
         </div>
 
         <div class="mb-6 bg-gray-700 p-4 rounded-lg">
-          <p class="font-medium text-xl mb-3">
-            <span class="mr-2 text-purple-400">🔴</span> 5. In the last 1-4
-            weeks, I felt difficult to relax?
+          <p class="font-medium text-lg mb-3">
+            <span class="mr-2 text-purple-400">🔴</span> 5. Dalam tempoh 1-4
+            minggu terakhir, saya rasa sukar untuk relaks? <br />
+            <small>
+              <i>In the last 1-4 weeks, I felt difficult to relax?</i>
+            </small>
           </p>
           <div class="flex flex-wrap gap-4">
             <label class="inline-flex items-center text-lg w-full sm:w-auto">
@@ -345,14 +416,28 @@
         <h2 class="text-4xl font-semibold mb-6 text-green-300">
           Your Performance Measure
         </h2>
-        <p class="text-lg mb-8">
-          Rate how often these performance issues occurred in the past month:
+        <p class="font-medium text-lg mb-8">
+          Dalam tempoh sebulan yang lalu, sila nilaikan kekerapan isu prestasi
+          ini berlaku: <br />
+          <small>
+            <i>
+              Rate how often these performance issues occurred in the past
+              month:
+            </i>
+          </small>
         </p>
 
         <div class="mb-6 bg-gray-700 p-4 rounded-lg">
-          <p class="font-medium text-xl mb-3">
-            <span class="mr-2 text-purple-400">💼</span> 6. During the past 1-4
-            weeks, how often was your performance lower than most workers?
+          <p class="font-medium text-lg mb-3">
+            <span class="mr-2 text-purple-400">💼</span> 6. Dalam tempoh 1-4
+            minggu yang lalu, berapa kerapkah prestasi anda lebih rendah
+            daripada kebanyakkan pekerja di tempat kerja anda? <br />
+            <small>
+              <i>
+                During the past 1-4 weeks, how often was your performance is
+                lower than most workers at your work place?
+              </i>
+            </small>
           </p>
           <div class="flex flex-wrap gap-4">
             <label class="inline-flex items-center text-lg w-full sm:w-auto">
@@ -395,9 +480,16 @@
         </div>
 
         <div class="mb-6 bg-gray-700 p-4 rounded-lg">
-          <p class="font-medium text-xl mb-3">
-            <span class="mr-2 text-blue-400">💻</span> 7. During the past 1-4
-            weeks, how often did you do no work when you should?
+          <p class="font-medium text-lg mb-3">
+            <span class="mr-2 text-blue-400">💻</span> 7. Dalam tempoh 1-4
+            minggu yang lalu, berapa kerapkah anda tidak melakukan kerja pada
+            masa yang anda sepatutnya bekerja? <br />
+            <small>
+              <i>
+                During the past 1-4 weeks, how often did you do no work at times
+                when you were supposed to be working?
+              </i>
+            </small>
           </p>
           <div class="flex flex-wrap gap-4">
             <label class="inline-flex items-center text-lg w-full sm:w-auto">
@@ -440,9 +532,16 @@
         </div>
 
         <div class="mb-6 bg-gray-700 p-4 rounded-lg">
-          <p class="font-medium text-xl mb-3">
-            <span class="mr-2 text-red-400">❗</span> 8. During the past 1-4
-            weeks, how often did you not work carefully?
+          <p class="font-medium text-lg mb-3">
+            <span class="mr-2 text-red-400">❗</span> 8. Dalam tempoh 1-4 minggu
+            yang lalu, berapa kerapkan anda mendapati diri anda tidak bekerja
+            dengan berhati-hati/teliti seperti yang sepatutnya? <br />
+            <small>
+              <i>
+                During the past 1-4 weeks, how often did you find yourself not
+                working carefully as you should?
+              </i>
+            </small>
           </p>
           <div class="flex flex-wrap gap-4">
             <label class="inline-flex items-center text-lg w-full sm:w-auto">
@@ -485,9 +584,16 @@
         </div>
 
         <div class="mb-6 bg-gray-700 p-4 rounded-lg">
-          <p class="font-medium text-xl mb-3">
-            <span class="mr-2 text-blue-300">💎</span> 9. During the past 1-4
-            weeks, how often was your work quality low?
+          <p class="font-medium text-lg mb-3">
+            <span class="mr-2 text-blue-300">💎</span> 9. Dalam tempoh 1-4
+            minggu yang lalu, berapa kerapkah kualiti kerja anda lebih rendah
+            daripada yang sepatutnya? <br />
+            <small>
+              <i>
+                During the past 1-4 weeks, how often was the quality of your
+                work lower than it should be?
+              </i>
+            </small>
           </p>
           <div class="flex flex-wrap gap-4">
             <label class="inline-flex items-center text-lg w-full sm:w-auto">
@@ -530,9 +636,16 @@
         </div>
 
         <div class="mb-6 bg-gray-700 p-4 rounded-lg">
-          <p class="font-medium text-xl mb-3">
-            <span class="mr-2 text-green-300">🌲</span> 10. During the past 1-4
-            weeks, how often did you not fully concentrate?
+          <p class="font-medium text-lg mb-3">
+            <span class="mr-2 text-green-300">🌲</span> 10. Dalam tempoh 1-4
+            minggu yang lalu, berapa kerapkah anda tidak menumpukan sepenuh
+            perhatian pada kerja anda? <br />
+            <small>
+              <i>
+                During the past 1-4 weeks, how often do you not fully
+                concentrate on your work?
+              </i>
+            </small>
           </p>
           <div class="flex flex-wrap gap-4">
             <label class="inline-flex items-center text-lg w-full sm:w-auto">
@@ -567,6 +680,58 @@
             </label>
             <label class="inline-flex items-center text-lg w-full sm:w-auto">
               <input type="radio" name="q10" value="5" class="form-radio" />
+              <span class="ml-2"
+                >Very Frequent <span class="text-red-600"></span
+              ></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="mb-6 bg-gray-700 p-4 rounded-lg">
+          <p class="font-medium text-lg mb-3">
+            <span class="mr-2 text-green-300">🎯</span> 11. Dalam tempoh 1-4
+            minggu yang lalu, berapa kerapkah masalah kesihatan menghadkan jenis
+            atau jumlah kerja yang boleh anda lakukan? <br />
+            <small>
+              <i>
+                During the past 1-4 weeks, how often did health problems limit
+                the kind or amount of work you could do?
+              </i>
+            </small>
+          </p>
+          <div class="flex flex-wrap gap-4">
+            <label class="inline-flex items-center text-lg w-full sm:w-auto">
+              <input
+                type="radio"
+                name="q11"
+                value="1"
+                class="form-radio"
+                required
+              />
+              <span class="ml-2"
+                >Very Rare <span class="text-yellow-400"></span
+              ></span>
+            </label>
+            <label class="inline-flex items-center text-lg w-full sm:w-auto">
+              <input type="radio" name="q11" value="2" class="form-radio" />
+              <span class="ml-2"
+                >Rare <span class="text-orange-400"></span
+              ></span>
+            </label>
+            <label class="inline-flex items-center text-lg w-full sm:w-auto">
+              <input type="radio" name="q11" value="3" class="form-radio" />
+              <span class="ml-2"
+                >Moderate <span class="text-yellow-500"></span
+              ></span>
+            </label>
+            <label class="inline-flex items-center text-lg w-full sm:w-auto">
+              <input type="radio" name="q11" value="4" class="form-radio" />
+              <span class="ml-2"
+                >Frequent <span class="text-red-500"></span
+              ></span>
+            </label>
+            <label class="inline-flex items-center text-lg w-full sm:w-auto">
+              <input type="radio" name="q11" value="5" class="form-radio" />
               <span class="ml-2"
                 >Very Frequent <span class="text-red-600"></span
               ></span>
@@ -659,8 +824,8 @@
               class="flex justify-between w-full max-w-[200px] mt-2 text-sm text-gray-400 transform rotate(180deg)"
             >
               <span>1</span>
-              <span>2.5</span>
-              <span>5</span>
+              <span>3</span>
+              <span>6</span>
             </div>
           </div>
         </div>
@@ -680,6 +845,8 @@
         </button>
       </section>
     </div>
+
+    <!-- Custom Modal Structure -->
 
     <script src="script.js"></script>
   </body>
