@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const numPerformanceQuestions = 6;
   const totalQuestions = numStressQuestions + numPerformanceQuestions; // Overall total questions
 
-  // Define the value mapping for radio buttons (already 1-5, simple)
+  // Define the value mapping for radio buttons
   // Define the level thresholds
   const LEVEL_THRESHOLDS = {
     "Very Low": 1.5,
@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return "Very Low"; // Most issues means very low performance
   }
 
-  // Recommendation Table (from your screenshot) - REVISED FOR LOGIC
+  // Recommendation Table
   const recommendations = {
     "Very Low_Very High":
       "Mental health is excellent and performance is excellent",
@@ -99,30 +99,30 @@ document.addEventListener("DOMContentLoaded", () => {
     "Very Low_Moderate":
       "Mental health is excellent, but performance needs monitoring",
     "Very Low_Low":
-      "Mental health is excellent, and performance needs training", // Revised for consistency
+      "Mental health is excellent, and performance needs training",
     "Very Low_Very Low":
-      "Mental health is excellent, and performance needs training", // Revised for consistency
+      "Mental health is excellent, and performance needs training",
 
     "Low_Very High": "Mental health is good and performance is excellent",
     Low_High: "Mental health is good and performance are good",
     Low_Moderate: "Mental health is good, but performance needs monitoring",
-    Low_Low: "Mental health is good, and performance needs training", // Revised for consistency
-    "Low_Very Low": "Mental health is good, and performance needs training", // Revised for consistency
+    Low_Low: "Mental health is good, and performance needs training",
+    "Low_Very Low": "Mental health is good, and performance needs training",
 
     "Moderate_Very High":
       "Mental health needs monitoring, but performance is excellent",
     Moderate_High:
       "Mental health needs monitoring and performance needs training",
     Moderate_Moderate: "Mental health and performance need monitoring",
-    Moderate_Low: "Mental health and performance need training", // Revised for consistency
-    "Moderate_Very Low": "Mental health and performance need training", // Revised for consistency
+    Moderate_Low: "Mental health and performance need training",
+    "Moderate_Very Low": "Mental health and performance need training",
 
     "High_Very High":
       "Mental health needs counseling, but performance is excellent",
     High_High: "Mental health needs counseling and performance needs training",
     High_Moderate:
       "Mental health needs counseling and performance needs monitoring",
-    High_Low: "Mental health needs counseling and performance needs training", // Revised for consistency
+    High_Low: "Mental health needs counseling and performance needs training",
     "High_Very Low":
       "Mental health needs counselling, and performance needs training",
 
@@ -133,30 +133,30 @@ document.addEventListener("DOMContentLoaded", () => {
     "Very High_Moderate":
       "Mental health needs counseling and performance needs monitoring",
     "Very High_Low":
-      "Mental health needs counseling and performance needs training", // Revised for consistency
+      "Mental health needs counseling and performance needs training",
     "Very High_Very Low":
       "Mental health needs counselling, and performance needs training",
   };
 
-  // Helper function to show custom modal
-  function showModal(message) {
-    if (customModal) {
-      modalMessage.textContent = message;
-      customModal.classList.remove("hidden");
-      customModal.classList.add("flex"); // Ensure flexbox for centering
-    } else {
-      console.error("Custom modal element not found. Cannot show modal.");
-      alert(message); // Fallback to alert if modal not found, for debugging purposes
-    }
-  }
+  // // Helper function to show custom modal
+  // function showModal(message) {
+  //   if (customModal) {
+  //     modalMessage.textContent = message;
+  //     customModal.classList.remove("hidden");
+  //     customModal.classList.add("flex");
+  //   } else {
+  //     console.error("Custom modal element not found. Cannot show modal.");
+  //     alert(message);
+  //   }
+  // }
 
-  // Helper function to hide custom modal
-  function hideModal() {
-    if (customModal) {
-      customModal.classList.add("hidden");
-      customModal.classList.remove("flex");
-    }
-  }
+  // // Helper function to hide custom modal
+  // function hideModal() {
+  //   if (customModal) {
+  //     customModal.classList.add("hidden");
+  //     customModal.classList.remove("flex");
+  //   }
+  // }
 
   // Event listeners for custom modal
   if (modalOkButton) {
